@@ -1,3 +1,32 @@
+# Book Catalog Application
+
+A Yii2-based web application for managing a catalog of books and authors with subscription functionality.
+
+## Features
+
+- **Books Management**
+    - View list of books with details
+    - Add new books
+    - Edit existing books
+    - Delete books
+    - View book details including cover images
+
+- **Authors Management**
+    - View list of authors
+    - Add new authors
+    - Edit existing authors
+    - Delete authors
+    - View author details with their books
+
+- **Subscription System**
+    - Subscribe to authors with phone number
+    - Unique constraint on author-phone combination
+    - Phone number validation
+
+- **Reports**
+    - Top 10 authors by number of books published in a given year
+
+
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
         <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
