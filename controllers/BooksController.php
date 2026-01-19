@@ -7,6 +7,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * BooksController implements the CRUD actions for Books model.
@@ -21,6 +22,27 @@ class BooksController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'actions' => ['index', 'view'], // Public actions
+                            'roles' => ['?', '@'], // Both guests and authenticated users
+                        ],
+                        [
+                            'allow' => true,
+                            'actions' => ['create', 'update', 'delete'], // Protected actions
+                            'roles' => ['@'], // Only authenticated users
+                        ],
+                    ],
+                    'denyCallback' => function ($rule, $action) {
+                        if (Yii::$app->user->isGuest) {
+                            return Yii::$app->getResponse()->redirect(['site/login']);
+                        }
+                        throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page.');
+                    }
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [

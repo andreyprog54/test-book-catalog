@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Authors;
+use app\models\AuthorSubscription;
 use app\models\Books;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -23,6 +24,27 @@ class AuthorsController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'actions' => ['index', 'view', 'subscribe'], // Public actions
+                            'roles' => ['?', '@'], // Both guests and authenticated users
+                        ],
+                        [
+                            'allow' => true,
+                            'actions' => ['create', 'update', 'delete'], // Protected actions
+                            'roles' => ['@'], // Only authenticated users
+                        ],
+                    ],
+                    'denyCallback' => function ($rule, $action) {
+                        if (Yii::$app->user->isGuest) {
+                            return Yii::$app->getResponse()->redirect(['site/login']);
+                        }
+                        throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page.');
+                    }
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -146,5 +168,21 @@ class AuthorsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionSubscribe($id)
+    {
+        $model = new AuthorSubscription();
+        $model->author_id = (int)$id;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'You have been successfully subscribed!');
+            return $this->redirect(['view', 'id' => $id]);
+        }
+
+        return $this->render('subscribe', [
+            'model' => $model,
+            'author' => $this->findModel($id),
+        ]);
     }
 }

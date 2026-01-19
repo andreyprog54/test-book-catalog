@@ -15,11 +15,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="books-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <?php if (!Yii::$app->user->isGuest): ?>
     <p>
         <?= Html::a('Create Books', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-
+    <?php endif; ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -36,7 +36,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Books $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                 },
+                    'template' => Yii::$app->user->isGuest ? '{view}' : '{view} {update} {delete}',
             ],
         ],
     ]); ?>
