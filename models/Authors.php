@@ -96,4 +96,28 @@ class Authors extends \yii\db\ActiveRecord
             ->via('bookAuthor');
     }
 
+    /**
+     * Gets top N authors with most books for a specific year
+     *
+     * @param int|null $year The year to filter by (current year if null)
+     * @param int $limit Number of authors to return
+     * @return \yii\db\ActiveQuery
+     */
+    public static function getTopAuthorsByYear($year = null, $limit = 10)
+    {
+        $year = $year ? (int)$year : date('Y');
+
+        return static::find()
+            ->select([
+                'authors.*',
+                'COUNT(books.id) as book_count'
+            ])
+            ->joinWith(['books' => function($query) use ($year) {
+                $query->andWhere(['books.year' => $year]);
+            }])
+            ->groupBy('authors.id')
+            ->orderBy(['book_count' => SORT_DESC])
+            ->limit($limit);
+    }
+
 }

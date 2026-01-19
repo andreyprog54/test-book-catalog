@@ -35,6 +35,29 @@ $this->params['breadcrumbs'][] = $this->title;
             'description:ntext',
             'isbn',
             'cover_image',
+            [
+                'attribute' => 'cover_image',
+                'format' => 'html',
+                'value' => function($model) {
+                    return $model->cover_image ? Html::img($model->cover_image, ['style' => 'max-width: 200px;']) : null;
+                },
+            ],
+            [
+                'label' => 'Authors',
+                'format' => 'raw',
+                'value' => function($model) {
+                    if (empty($model->authors)) {
+                        return 'No authors found';
+                    }
+
+                    $authors = [];
+                    foreach ($model->authors as $author) {
+                        $authors[] = Html::a(Html::encode($author->name), ['/authors/view', 'id' => $author->id]);
+                    }
+
+                    return implode('<br>', $authors);
+                },
+            ],
         ],
     ]) ?>
 

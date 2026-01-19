@@ -31,6 +31,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'name',
+            [
+                'label' => 'Books',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    if (empty($model->books)) {
+                        return 'No books found';
+                    }
+                    $books = [];
+                    foreach ($model->books as $book) {
+                        $books[] = Html::a(Html::encode($book->title), ['/books/view', 'id' => $book->id]);
+                    }
+                    return implode('<br>', $books);
+                },
+            ],
         ],
     ]) ?>
 
