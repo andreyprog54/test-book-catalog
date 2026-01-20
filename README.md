@@ -27,6 +27,13 @@ A Yii2-based web application for managing a catalog of books and authors with su
     - Top 10 authors by number of books published in a given year
 
 
+
+## Author
+
+Andrey Slutskiy - [andrey.prog54@gmail.com](mailto:andrey.prog54@gmail.com) -
+[https://www.linkedin.com/in/andrey-slutskiy/](https://www.linkedin.com/in/andrey-slutskiy/?locale=en_US)
+
+
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
         <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
