@@ -24,8 +24,6 @@ class Authors extends \yii\db\ActiveRecord
         return 'authors';
     }
 
-    public $bookIds = [];
-
     /**
      * {@inheritdoc}
      */
@@ -34,39 +32,7 @@ class Authors extends \yii\db\ActiveRecord
         return [
             [['name'], 'required'],
             [['name'], 'string', 'max' => 255],
-            ['bookIds', 'each', 'rule' => ['integer']],
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function afterFind()
-    {
-        parent::afterFind();
-        $this->bookIds = $this->getBooks()->select('id')->column();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-        
-        // Удаляем старые связи
-        BookAuthor::deleteAll(['author_id' => $this->id]);
-        
-        // Добавляем новые связи
-        if (!empty($this->bookIds)) {
-            $rows = [];
-            foreach ($this->bookIds as $bookId) {
-                $rows[] = [$bookId, $this->id];
-            }
-            Yii::$app->db->createCommand()
-                ->batchInsert('book_author', ['book_id', 'author_id'], $rows)
-                ->execute();
-        }
     }
 
     /**
@@ -94,6 +60,19 @@ class Authors extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Books::class, ['id' => 'book_id'])
             ->via('bookAuthor');
+    }
+
+    /**
+     * Возвращает список авторов в формате id => name для форм.
+     *
+     * @return array
+     */
+    public static function getList(): array
+    {
+        return static::find()
+            ->select(['name', 'id'])
+            ->indexBy('id')
+            ->column();
     }
 
     /**

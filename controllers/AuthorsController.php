@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use app\models\Authors;
 use app\models\AuthorSubscription;
-use app\models\Books;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -102,7 +101,6 @@ class AuthorsController extends Controller
     public function actionCreate()
     {
         $model = new Authors();
-        $books = Books::find()->select(['title', 'id'])->indexBy('id')->column();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -114,7 +112,6 @@ class AuthorsController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'books' => $books,
         ]);
     }
 
@@ -128,7 +125,6 @@ class AuthorsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $books = Books::find()->select(['title', 'id'])->indexBy('id')->column();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -136,7 +132,6 @@ class AuthorsController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'books' => $books,
         ]);
     }
 

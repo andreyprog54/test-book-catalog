@@ -7,6 +7,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 use Yii;
 
 /**
@@ -100,10 +101,26 @@ class BooksController extends Controller
     public function actionCreate()
     {
         $model = new Books();
+        $authors = \app\models\Authors::getList();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->coverFile = UploadedFile::getInstance($model, 'coverFile');
+
+                if ($model->validate()) {
+                    if ($model->coverFile) {
+                        $fileName = uniqid('cover_', true) . '.' . $model->coverFile->extension;
+                        $uploadPath = Yii::getAlias('@webroot/uploads/') . $fileName;
+
+                        if ($model->coverFile->saveAs($uploadPath)) {
+                            $model->cover_image = '/uploads/' . $fileName;
+                        }
+                    }
+
+                    if ($model->save(false)) {
+                        return $this->redirect(['view', 'id' => $model->id]);
+                    }
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -111,6 +128,7 @@ class BooksController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'authors' => $authors,
         ]);
     }
 
@@ -124,13 +142,38 @@ class BooksController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $authors = \app\models\Authors::getList();
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $oldCover = $model->cover_image;
+            $model->coverFile = UploadedFile::getInstance($model, 'coverFile');
+
+            if ($model->validate()) {
+                if ($model->coverFile) {
+                    $fileName = uniqid('cover_', true) . '.' . $model->coverFile->extension;
+                    $uploadPath = Yii::getAlias('@webroot/uploads/') . $fileName;
+
+                    if ($model->coverFile->saveAs($uploadPath)) {
+                        $model->cover_image = '/uploads/' . $fileName;
+
+                        if ($oldCover) {
+                            $oldPath = Yii::getAlias('@webroot') . $oldCover;
+                            if (is_file($oldPath)) {
+                                @unlink($oldPath);
+                            }
+                        }
+                    }
+                }
+
+                if ($model->save(false)) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
+            'authors' => $authors,
         ]);
     }
 

@@ -2,40 +2,39 @@
 
 # Book Catalog Application
 
-A Yii2 application for managing a catalog of books and authors with author subscriptions, a Top‑10 report, and book cover uploads.
+Yii2‑приложение для управления каталогом книг и авторов с возможностью подписки на авторов, отчётом Top‑10 и загрузкой обложек книг.
 
 ## Features
 
 - **Books Management**
-    - view a list of books (GridView);
-    - create, update, and delete books (only for authenticated users);
-    - upload a book cover file (files are stored in `web/uploads`, the path is stored in the `cover_image` field);
-    - edit the list of authors for a book (many‑to‑many relation via the `book_author` table);
-    - view detailed information about a book, including the cover image and the list of authors with links to their pages.
+    - просмотр списка книг (GridView);
+    - создание, редактирование и удаление книг (только для авторизованных пользователей);
+    - загрузка файла обложки книги (файлы хранятся в `web/uploads`, путь — в поле `cover_image`);
+    - редактирование списка авторов книги (связь многие‑ко‑многим через таблицу `book_author`);
+    - просмотр детальной информации о книге, включая отображение обложки и списка авторов с ссылками на их карточки.
 
 - **Authors Management**
-    - view a list of authors (GridView);
-    - create, update, and delete authors (only for authenticated users);
-    - view an author’s page with their books (the relations themselves are edited via the book form);
-    - subscribe to an author from the author’s page.
+    - просмотр списка авторов (GridView);
+    - создание, редактирование и удаление авторов (только для авторизованных пользователей);
+    - просмотр карточки автора с его книгами (сами связи редактируются через форму книги);
+    - кнопка подписки на автора на странице автора.
 
 - **Subscription System**
-    - subscribe to an author by phone number;
-    - store subscriptions in the `author_subscription` table with a foreign key to `authors`;
-    - enforce a unique `(author_id, phone)` combination — the same phone number cannot subscribe to the same author twice;
-    - validate phone numbers (for example, the Russian format `^7[0-9]{10}$`).
+    - подписка на автора по номеру телефона;
+    - хранение подписок в таблице `author_subscription` с внешним ключом на `authors`;
+    - уникальная комбинация `(author_id, phone)` — один и тот же номер не может подписаться на одного автора дважды;
+    - валидация номера телефона (например, формат для российских номеров `^7[0-9]{10}$`).
 
 - **Reports**
-    - Top‑10 authors by number of books for a selected year (`/report/top10authors?year=YYYY`);
-    - the query for the report is implemented in the [Authors::getTopAuthorsByYear()](cci:1://file:///C:/Work/WebDev/Test%20Work/Test%20Book%20Catalog/test-book-catalog/models/Authors.php:124:4-146:5) model method, keeping the controller “thin”.
+    - отчёт Top‑10 авторов по количеству книг за выбранный год (`/report/top10authors?year=YYYY`);
+    - запрос для отчёта вынесен в модель [Authors::getTopAuthorsByYear()](cci:1://file:///C:/Work/WebDev/Test%20Work/Test%20Book%20Catalog/test-book-catalog/models/Authors.php:124:4-146:5), контроллер остаётся «тонким».
 
 - **Security & Access Control**
-    - `AccessControl` in [AuthorsController](cci:2://file:///C:/Work/WebDev/Test%20Work/Test%20Book%20Catalog/test-book-catalog/controllers/AuthorsController.php:15:0-182:1) and [BooksController](cci:2://file:///C:/Work/WebDev/Test%20Work/Test%20Book%20Catalog/test-book-catalog/controllers/BooksController.php:15:0-208:1):
-        - `create`, `update`, `delete` actions are available only to authenticated users;
-        - `index`, `view`, and `subscribe` (author subscription) actions are available to everyone;
-    - `Create`, `Update`, `Delete` buttons and `ActionColumn` actions in book and author lists are shown only to authenticated users;
-    - CSRF protection and data validation are handled by Yii2.
-
+    - `AccessControl` в [AuthorsController](cci:2://file:///C:/Work/WebDev/Test%20Work/Test%20Book%20Catalog/test-book-catalog/controllers/AuthorsController.php:15:0-182:1) и [BooksController](cci:2://file:///C:/Work/WebDev/Test%20Work/Test%20Book%20Catalog/test-book-catalog/controllers/BooksController.php:14:0-169:1):
+        - действия `create`, `update`, `delete` доступны только авторизованным пользователям;
+        - действия `index`, `view` и `subscribe` (подписка на автора) доступны всем;
+    - кнопки `Create`, `Update`, `Delete` и действия в `ActionColumn` в списках книг и авторов отображаются только для авторизованных пользователей;
+    - защита от CSRF и валидация данных средствами Yii2.
 
 
 ## Author
